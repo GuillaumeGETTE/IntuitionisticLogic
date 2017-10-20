@@ -10,10 +10,22 @@ let streamA = Stream.from (fun i -> Some (i+1))
 let streamB = Stream.from (fun i -> Some (i+1))
 let streamC = Stream.from (fun i -> Some (i+1))
 let streamQ = Stream.from (fun i -> Some (i+1))
+let streamP = Stream.from (fun i -> Some (i+1))
 
-let introduce_atom f = match f with
-  |Implies(_,Atom(s))->f
-  |_->let q = new_atom streamQ 4 in implies_formula (implies_formula f q) q
+let rename_all_atoms f =
+  let hasht = Hashtbl.create 10 in
+  let rec aux fAux = match fAux with
+  |Atom(_)->let s=get_atom_content fAux in (try Hashtbl.find hasht s with |Not_found->Hashtbl.add hasht s (new_atom streamP 0))
+  |And(f1,f2)->and_formula (aux f1) (aux f2)
+  |Or(f1,f2)->or_formula (aux f1) (aux f2)
+  |Implies(f1,f2)->implies_formula (aux f1) (aux f2)
+  |_->fAux
+in aux f
+
+let introduce_atom f = let f1 = rename_all_atoms f in
+match f1 with
+  |Implies(_,Atom(s))->f1
+  |_->let q = new_atom streamQ 4 in implies_formula (implies_formula f1 q) q
 
 
 let splitType = |Failure |Success of formula list
