@@ -4,6 +4,8 @@ open Generics.GENERICS
 
 module CLAUSIFICATION = struct
 
+type clausifiedFormula = formula list * formula list * formula
+
 let streamA = Stream.from (fun i -> Some (i+1))
 let streamB = Stream.from (fun i -> Some (i+1))
 let streamC = Stream.from (fun i -> Some (i+1))

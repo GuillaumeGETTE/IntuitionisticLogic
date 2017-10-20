@@ -21,8 +21,13 @@ let top_formula () = Top
 let btm_formula () = Btm
 
 let new_atom s = function
-  |1->atom_formula "a"^(string_from_int (Stream.next s))
-  |2->atom_formula "b"^(string_from_int (Stream.next s))
-  |3->atom_formula "c"^(string_from_int (Stream.next s))
+  |1->atom_formula ("a"^(string_of_int (Stream.next s)))
+  |2->atom_formula ("b"^(string_of_int (Stream.next s)))
+  |3->atom_formula ("c"^(string_of_int (Stream.next s)))
   |_->atom_formula "q"
+
+let get_atom_content = function |Atom(s)->(s:string) |_-> failwith "Not an atom"
+
+let atom_equal a1 a2 = String.equal (get_atom_content a1) (get_atom_content a2)
+
 end

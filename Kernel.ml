@@ -1,12 +1,18 @@
 open Syntax.SYNTAX
 
+module Sequent = struct
+  type sequent = formula list * formula
+  let build_sequent l t = (l, t)
+  let left = function (l, _) -> l
+  let right = function (_, t) -> t
+end
+
 module KERNEL = struct
 
-type sequent = {left : formula list; right : formula list}
+type rule = string
+type provable = Sequent.sequent
 
-type provable = sequent
-
-let conclusion (t: provable) = (t:sequent)
+let conclusion (t: Sequent.sequent) = (t: provable)
 
 end
 
