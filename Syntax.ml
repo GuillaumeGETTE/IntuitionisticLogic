@@ -24,7 +24,8 @@ let new_atom s = function
   |1->atom_formula ("a"^(string_of_int (Stream.next s)))
   |2->atom_formula ("b"^(string_of_int (Stream.next s)))
   |3->atom_formula ("c"^(string_of_int (Stream.next s)))
-  |_->atom_formula "q"
+  |4->atom_formula "q"
+  |_->atom_formula ("p"^(string_of_int (Stream.next s)))
 
 let get_atom_content = function |Atom(s)->(s:string) |_-> failwith "Not an atom"
 
