@@ -1,6 +1,4 @@
 open Syntax.SYNTAX
-open Kernel.KERNEL
-open Kernel.Sequent
 
 module GENERICS = struct
    let rec formula_contains_atom q = function
@@ -14,14 +12,16 @@ let rec formula_list_contains_atom q = function
   |[]->false
   |h::t->(formula_contains_atom q h)||(formula_list_contains_atom q t)
 
-let contains_atom seq q =
- (formula_list_contains_atom q (left seq))||(formula_contains_atom q (right seq))
+(*let contains_atom seq q =
+ (formula_list_contains_atom q (left seq))||(formula_contains_atom q (right seq))*)
 
-let merge l1 l2 =
- let rec aux =function
-  |[]->l2
-  |t::q-> t::(aux q)
- in aux l1
+let merge l1 l2 = List.rev_append (List.rev l1) l2
 
+let remove x l =
+    let rec aux acc = function
+    |[]->failwith "Failed executing GENERICS.remove: No such element"
+    |t::q when t=x->List.rev_append acc q
+    |t::q->aux (t::acc) q
+in aux [] l
 
 end

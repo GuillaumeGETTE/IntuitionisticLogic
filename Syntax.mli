@@ -15,5 +15,6 @@ val top_formula : unit -> formula
 val btm_formula : unit -> formula
 
 val new_atom : int Stream.t -> int -> formula
+val get_atom_content : formula -> string
 val atom_equal : formula -> formula -> bool
 end

@@ -29,6 +29,6 @@ let new_atom s = function
 
 let get_atom_content = function |Atom(s)->(s:string) |_-> failwith "Not an atom"
 
-let atom_equal a1 a2 = String.equal (get_atom_content a1) (get_atom_content a2)
+let atom_equal a1 a2 = (String.equal (get_atom_content a1) (get_atom_content a2))
 
 end

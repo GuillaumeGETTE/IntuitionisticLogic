@@ -8,7 +8,15 @@ module Sequent : sig
 end
 
 module KERNEL : sig
-    type rule
     type provable
     val conclusion : Sequent.sequent -> provable
+    val provable_from_formula : formula -> provable
+end
+
+module Rules : sig
+    type rule
+    val implRule : unit -> rule
+    val satRule : unit -> rule
+    val build_rule : int -> rule
+    (*val apply_impl : formula -> KERNEL.provable -> Forest.ProofTree.tree -> Forest.ProofTree.tree*)
 end
