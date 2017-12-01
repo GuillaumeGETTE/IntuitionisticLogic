@@ -1,0 +1,95 @@
+\section{\'Logique intuitionniste et m\'ethode de r\'esolution}
+
+\subsection{D\'etail d'un SAT-solver en logique intuitionniste}
+Syntaxiquement, une formule intuitionniste est definie récursivement, comme il suit :
+
+
+On remarque que cette d\'efinition diff\`ere de la logique classique par l'absence de symbole de n\'egation. Cette absence est li\'e \`a l'absence de l'axiome du tiers exclu, \`a savoir : $A \lor \neg A = T$ 
+
+\subsection{Calcul des séquents intuitionniste}
+
+Une construction importante en logique et en th\'eorie de la preuve est le calcul des s\'equents qui permet l'\'ecriture et la construction formelle de preuve. L'id\'ee principale est de manier un certain nombre de r\`egles en jouant sur la formes des formules consid\'er\'ees, pour r\'ecrire ce que l'on veut d\'emontrer et remonter ainsi successivement \`a des formes de plus en plus simple et par suite de plus en plus facile \`a manipuler. Il est naturel de vouloir \'etendre ce syst\`eme \`a la logique intuitionniste.
+Un s\'equent intuitionniste s'\'ecrit sous la forme :
+
+$$A_1, A_2, A_3, ..., A_n \vdash B$$
+
+et doit se comprendre comme la formule : $(A_1 \to (A_2 \to ... \to (A_n \to B)))$. Pour m\'emoire, l'\`equivalent en logique classique, se lit diff\'eremment à savoir que $A_1, A_2, ..., A_n \vdash B_1, ..., B_m$ se comprend comme $(A_1 \land A_2 ... \land A_n) \to (B_1 \lor ... \lor B_m)$.
+
+Les r\`egles du calcul de Dikhoff sont les suivantes :
+
+\begin{multicols}{2}
+\begin{prooftree}
+\AxiomC{  }
+\LeftLabel{Axiom}
+\UnaryInfC{$\Gamma, A \vdash A$}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{$A, B, \Gamma \vdash \Delta $}
+\LeftLabel{$\land$ Left}
+\UnaryInfC{$\Gamma, A \land B \vdash \Delta$}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{$A,\Gamma \vdash \Delta $}
+\AxiomC{$B,\Gamma \vdash \Delta $}
+\LeftLabel{$\lor$ Left}
+\BinaryInfC{$\Gamma, A \lor B \vdash \Delta$}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{$A,\Gamma \vdash A $}
+\AxiomC{$B,\Gamma \vdash B $}
+\LeftLabel{$\land$ Right}
+\BinaryInfC{$\Gamma \vdash A \land B$}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{$\Gamma, A \vdash B $}
+\LeftLabel{$\to$ Right}
+\UnaryInfC{$\Gamma \vdash  (A \to B)$}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{$B, a, \Gamma \vdash \Delta $}
+\LeftLabel{$\to$ LeftAtom}
+\UnaryInfC{$a \to B, a, \Gamma \vdash \Delta$}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{$C \to (A \to B), \Gamma \vdash \Delta $}
+\LeftLabel{$\to$ LeftAnd}
+\UnaryInfC{$ (C \land A) \to B \vdash \Delta$}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{$(C \to A), (C \to B), \Gamma \vdash \Delta $}
+\LeftLabel{$\to$ LeftOr}
+\UnaryInfC{$ (C \land A) \to B \vdash \Delta$}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{$C \to A, \Gamma \vdash C \to A $}
+\AxiomC{$B, \Gamma \vdash \Delta$}
+\LeftLabel{$\to$ LeftImplies}
+\BinaryInfC{$ (C \land A) \to B \vdash \Delta$}
+\end{prooftree}
+\end{multicols}
+
+
+Pour d\'emontrer une formule automatiquement en utilisant ces r\`egles, il suffit de les appliquer "de bas en haut", et d'essayer de remonter \`a une forme simple et facilement v\'erifiable, comme un sequent ne comprenant qu'un ensemble d'atomes.
+On s'assure de la terminaison d'un tel algorithme utilisant ces r\`egles, en utilisant un poids $w$ et en montrant qu'il s'agit d'une fonction d\'ecroissante "en remontant" dans un arbre de preuve; c'est-\`a-dire que le poids de l'ensemble des formules au dessus de la barre de d\'eduction est strictement inférieur à celui plac\'e au dessous de la barre. La fonction $w$ est d\'efinie r\'ecursivement comme il suit : \\
+$w(a) = 1$ quand $a$ est un atome \\
+$w(A \land B) = w(A) + w(B) + 2 $ \\
+$w(A \to B ) = w(A \lor B) = w(A) + w(B) + 1$\\
+$w(A \lor B) = w(A) + w(B) + 1$\\
+
+On peut constater que ces r\`egles sont tr\`es similaire \`a celle utilis\`ee dans le calcul des s\'equents classique, avec une subtilit\`e supl\'ementaire apport\'ee par Dykhoff, la r\`egle "$\to$ Left" est d\'ecompos\'ee en 4 nouvelles r\`eglesselon la forme de la formule servant de pr\'emisse à l'implication à laquelle la r\`egles est appliqu\'ee. Cette modification de Dykhoff permet d'\'eviter la cr\'eation de copies de formules, et ainsi d'assurer la terminaison (gr\^ace \`a l'argument du poids d\'ecroissant.)
+
+Le but de ce projet est de comprendre les liens qui unissent l'article \ref{intuit2015} et le calcul d'une preuve dans ce calcul. Pour ce faire nous modifions l'algorithme original et tentons de formaliser les diff\'erentes etapes du calcul pour les r\'ecrire dans les r\`egles explicit\'ees ci-dessus. Ce calcul permet trois choses :
+
+\begin{itemize}
+\item Fournir une m\'ethode efficace de preuve en logique intuitionniste, car l'algorithme d\'ecrit dans \ref{intuit2005} est de loin l'un des plus efficace de l'\'etat de l\'art
+\item Comprendre ce qui fait pr\'ecis\'ement l'efficacit\'e de cette algorithme en le formalisant
+\item [TROUVER UNE TROISIEME RAISON]
+\end{itemize}

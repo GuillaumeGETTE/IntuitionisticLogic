@@ -1,0 +1,9 @@
+\contentsline {section}{\tocsection {}{1}{\'Logique intuitionniste et m\'ethode de r\'esolution}}{2}
+\contentsline {subsection}{\tocsubsection {}{1.1}{D\'etail d'un SAT-solver en logique intuitionniste}}{2}
+\contentsline {subsection}{\tocsubsection {}{1.2}{Calcul des séquents intuitionniste}}{2}
+\contentsline {section}{\tocsection {}{2}{Construction d'une preuve en logique intuitionniste}}{3}
+\contentsline {subsection}{\tocsubsection {}{2.1}{Modification de l'algorithme}}{3}
+\contentsline {subsection}{\tocsubsection {}{2.2}{R\'ecriture d'une preuve classique en intuitionniste}}{3}
+\contentsline {section}{\tocsection {}{3}{Impl\'ementation et r\'esultat}}{4}
+\contentsline {subsection}{\tocsubsection {}{3.1}{Structure du projet}}{4}
+\contentsline {subsection}{\tocsubsection {}{3.2}{R\'esultats}}{4}
