@@ -1,4 +1,4 @@
-open Kernel
+open IKernel
 
 module ProofTree = struct
          type satleaf = string

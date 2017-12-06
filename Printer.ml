@@ -1,5 +1,5 @@
 open Syntax.SYNTAX
-open Kernel.KERNEL
+open IKernel.KERNEL
 
 module SYMBOLS = struct
 

@@ -1,12 +1,30 @@
 \section{\'Logique intuitionniste et m\'ethode de r\'esolution}
 
 \subsection{D\'etail d'un SAT-solver en logique intuitionniste}
-Syntaxiquement, une formule intuitionniste est definie récursivement, comme il suit :
+Syntaxiquement, une formule intuitionniste est definie récursivement, comme il suit : \\
+
+$A := a | b |c |... $ (un atome) \\
+$A_1 \lor A_2 $ \\
+$A_1 \land A_2 $ \\
+$A_1 \to A_2 $ \\
+$T | \bot$ \\
 
 
-On remarque que cette d\'efinition diff\`ere de la logique classique par l'absence de symbole de n\'egation. Cette absence est li\'e \`a l'absence de l'axiome du tiers exclu, \`a savoir : $A \lor \neg A = T$ 
+On remarque que cette d\'efinition diff\`ere de la logique classique par l'absence de symbole de n\'egation. Cette absence est li\'e \`a l'absence de l'axiome du tiers exclu, \`a savoir : $A \lor \neg A = T$. En particulier, toute deduction faite en logique intuitionniste est en un certain sens "calculable".
+\\
+L'algorithme de \ref{intuit2015}, utilise une technique \'equivalente à celle de l'algorithme DPLL modulo une théorie en d\'ecomposant une formule intuitionniste que l'on cherche \`a prouver en deux ensemble de formule. Le premier se compose de clause dite "clause-implications" de la forme $(a \to b) \to c$ o\`u $a$, $b$et $c$ sont des atomes. Et le deuxi\`eme se compose de clauses dite plates, c'est-\`a-dire de formules de la forme :
 
-\subsection{Calcul des séquents intuitionniste}
+$$(a_1 \land a_2 \land ... \land a_n) \to (b_1 \lor b_2 \lor ... \lor b_m) $$
+
+C'est-\`a-dire, une conjonction d'atomes impliquant une disjonction d'atomes. On adopte la convention que l'un des deux cot\'es peut parfois \^etre vide, auquel cas on remplace \`a droite par $\bot$ et \`a gauche par $\top$. 
+
+
+Il est possible de prouver, comme on le fera dans la deuxi\`eme partie que toutes les déductions faites \`a partir de clauses plates par la logique classique sont compatible avec la logique intuitionniste. C'est par ce principe que l'on peut d\'eriver un SAT-solveur en logique intuitionniste \`a partir d'un SAT-Solveur classique. C'est-\`a-dire qu'en appelant le SAT-solveur sur la partie plate du probl\`eme on v\'erifie que la partie "plate" est satisfiable et si un mod\`ele est vient contredire cette premi\`ere partie, on utilise l'ensemble des clauses "implications" comme une th\'eorie contre laquelle tester le mod\`ele et extraire de l'information quant \`a notre probl\`eme.
+Ainsi, pour pr\'esenter l'algorithme il faut d'abord comprendre le pr\'etraitement permettant de d\'ecomposer une formule en clauses "plates" et en clauses "implications", puis comprendre comment l'algorithme fait interagir ces deux ensembles.
+
+
+
+\subsection{Calcul des s\'equents intuitionniste}
 
 Une construction importante en logique et en th\'eorie de la preuve est le calcul des s\'equents qui permet l'\'ecriture et la construction formelle de preuve. L'id\'ee principale est de manier un certain nombre de r\`egles en jouant sur la formes des formules consid\'er\'ees, pour r\'ecrire ce que l'on veut d\'emontrer et remonter ainsi successivement \`a des formes de plus en plus simple et par suite de plus en plus facile \`a manipuler. Il est naturel de vouloir \'etendre ce syst\`eme \`a la logique intuitionniste.
 Un s\'equent intuitionniste s'\'ecrit sous la forme :
@@ -89,7 +107,7 @@ On peut constater que ces r\`egles sont tr\`es similaire \`a celle utilis\`ee da
 Le but de ce projet est de comprendre les liens qui unissent l'article \ref{intuit2015} et le calcul d'une preuve dans ce calcul. Pour ce faire nous modifions l'algorithme original et tentons de formaliser les diff\'erentes etapes du calcul pour les r\'ecrire dans les r\`egles explicit\'ees ci-dessus. Ce calcul permet trois choses :
 
 \begin{itemize}
-\item Fournir une m\'ethode efficace de preuve en logique intuitionniste, car l'algorithme d\'ecrit dans \ref{intuit2005} est de loin l'un des plus efficace de l'\'etat de l\'art
-\item Comprendre ce qui fait pr\'ecis\'ement l'efficacit\'e de cette algorithme en le formalisant
+\item Fournir une m\'ethode efficace de preuve en logique intuitionniste, car l'algorithme d\'ecrit dans \ref{intuit2005} est de loin l'un des plus efficace de l'\'etat de l'art
+\item Comprendre ce qui fait pr\'ecis\'ement l'efficacit\'e de cet algorithme en le formalisant
 \item [TROUVER UNE TROISIEME RAISON]
 \end{itemize}

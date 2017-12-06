@@ -1,6 +1,6 @@
 open Syntax.SYNTAX
 open Kernel
-open Kernel.KERNEL
+open IKernel.KERNEL
 
 module SYMBOLS : sig
 

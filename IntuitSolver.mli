@@ -1,6 +1,6 @@
 open Syntax.SYNTAX
 open Forest
-open Kernel
+open IKernel
 
 module Answer : sig
    type sat = private YesSAT of a list * ProofTree.satleaf | NoSAT of a list
@@ -15,10 +15,10 @@ module Answer : sig
 end
 
 module type DPLL_Type = sig
-  val prove : Kernel.Sequent.sequent->Answer.sat
+  val prove : IKernel.Sequent.sequent->Answer.sat
 end
 
 module ProofBuilder (D : DPLL_Type) : sig
    val clause : a list -> a -> a -> formula
-   val intuitProve : formula list -> formula list -> formula list -> formula -> Answer.intuit
+   val intuitProve : formula list -> formula list -> a list -> formula -> Answer.intuit
 end

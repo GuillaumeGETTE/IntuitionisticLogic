@@ -1,7 +1,7 @@
 open Syntax.SYNTAX
 open Forest
 open Generics.GENERICS
-open Kernel
+open IKernel
 
 module Answer = struct
   type sat = YesSAT of a list * ProofTree.satleaf | NoSAT of a list
