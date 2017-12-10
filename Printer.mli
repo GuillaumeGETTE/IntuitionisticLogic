@@ -1,5 +1,5 @@
 open Syntax.SYNTAX
-open Kernel
+open IKernel
 open IKernel.KERNEL
 
 module SYMBOLS : sig
@@ -24,7 +24,7 @@ module PRINTER : sig
 
 val sequent_to_string : Sequent.sequent -> string
 val provable_to_string : provable -> string
-val print_sequent : sequent -> unit
-val print_theorem : theorem -> unit
+val print_sequent : Sequent.sequent -> unit
+val print_provable : provable -> unit
 
 end

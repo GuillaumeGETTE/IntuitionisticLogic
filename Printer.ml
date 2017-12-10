@@ -39,9 +39,9 @@ let formula_list_to_string = function
 let sequent_to_string ccl  = ((formula_list_to_string ccl.left)^((" "^printSeq)^" "))^(formula_list_to_string ccl.right)
 ;;
 
-let theorem_to_string ccl = sequent_to_string (conclusion ccl);;
+let provable_to_string ccl = sequent_to_string (conclusion ccl);;
 
 let print_sequent ccl = (Pervasives.print_string (sequent_to_string ccl); Pervasives.print_newline ());;
 
-let print_theorem ccl = print_sequent (conclusion ccl);;
+let print_provable ccl = print_sequent (conclusion ccl);;
 end

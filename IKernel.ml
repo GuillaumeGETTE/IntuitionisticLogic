@@ -23,7 +23,10 @@ end
 
 module Rules = struct
  type rule = string
- let implRule () = "//IMPL"
+ let implRule () = "IMPL"
+ let implInsertRule () = "\\Rightarrow I"
+ let mpRule () = "MP"
+ let dblnegRule () = "double negation"
  let satRule () = "Not sure yet, but SAT"
  let build_rule = function
   |0->"IMPL"

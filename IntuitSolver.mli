@@ -9,9 +9,9 @@ module Answer : sig
     val yes_sat : a list -> ProofTree.satleaf -> sat
     val no_sat : a list -> sat
     val yes_i : a list -> ProofTree.tree -> intuit
-    val no_i : Sequent.sequent -> ProofTree.tree -> intuit
-    val trueA : ProofTree.tree -> intuitAnswer
-    val falseA : formula -> formula -> intuitAnswer
+    val no_i : a list -> intuit
+    val trueA : unit -> intuitAnswer
+    val falseA :  a list -> a -> formula -> formula list -> ProofTree.tree -> intuitAnswer
 end
 
 module type DPLL_Type = sig

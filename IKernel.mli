@@ -18,6 +18,10 @@ module Rules : sig
     type rule
     val implRule : unit -> rule
     val satRule : unit -> rule
+    val mpRule : unit -> rule
+    val dblnegRule : unit -> rule
+    val implInsertRule : unit -> rule
+    val emptyRule : unit -> rule
     val build_rule : int -> rule
     (*val apply_impl : formula -> KERNEL.provable -> Forest.ProofTree.tree -> Forest.ProofTree.tree*)
 end

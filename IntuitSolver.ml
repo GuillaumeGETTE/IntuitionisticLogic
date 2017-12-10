@@ -5,14 +5,14 @@ open IKernel
 
 module Answer = struct
   type sat = YesSAT of a list * ProofTree.satleaf | NoSAT of a list
-  type intuit = YesI of a list * ProofTree.tree | NoI of Sequent.sequent * ProofTree.tree
-  type intuitAnswer = True of ProofTree.tree | False of formula  * formula
+  type intuit = YesI of a list * ProofTree.tree | NoI of a list
+  type intuitAnswer = True | False of a list * a * formula * formula list * ProofTree.tree
   let yes_sat l satL = YesSAT(l, satL)
   let no_sat l = NoSAT(l)
   let yes_i a p = YesI(a, p)
-  let no_i seq p = NoI(seq, p)
-  let trueA p = True(p)
-  let falseA f1 f2 = False(f1, f2)
+  let no_i l = NoI(l)
+  let trueA () = True
+  let falseA m c i x f = False(m, c, i, x, f)
 end
 
 module type DPLL_Type = sig
@@ -30,12 +30,13 @@ module ProofBuilder (D : DPLL_Type) = struct
     let rec aux acc = function a::tl -> aux ((atom_formula a)::acc) tl | [] -> List.rev acc in
     aux [] l;;
 
+  let rec conjunction = function
+    |[]->top_formula ()
+    |t::[]->atom_formula t
+    |t::q->and_formula (atom_formula t) (conjunction q)
+     
   let prove_me_wrong r x q =
     failwith "I'm not sure yet";;
-  let format_no_intuit_anwser = failwith "not implemented";;
-  let h_build = failwith  "Not Implemented";;
-  let clause ap a c = failwith "Not implemented";;
-  let format_intuit_answer a = failwith "not implemented";;
   let f ap p seq = Forest.ProofTree.computeNode (Rules.satRule ()) (KERNEL.conclusion seq) ((Forest.ProofTree.sat p)::[]);;
   let g h s x a q = (Forest.ProofTree.computeNode (Rules.implRule ()) (KERNEL.conclusion (Sequent.build_sequent (merge (merge (merge s (to_formula_list a)) x) (q::[])) (btm_formula ()))) [h]);;
   let rec intuitProve s x a q =
@@ -45,31 +46,31 @@ module ProofBuilder (D : DPLL_Type) = struct
     |YesSAT(ap, p) -> (Answer.yes_i ap (f ap p seq))
     |NoSAT(m) ->
       match (intuitCheck s x m) with
-      |True(h) -> NoI(seqx, g h s x a q)
-      |False(c, i) ->
-        match (intuitProve (c::s) (remove i x) a q) with
-        |YesI(ap, p) -> YesI(ap, (ProofTree.computeNode (Rules.implRule ()) (KERNEL.conclusion seqx) ((Forest.ProofTree.axiom (KERNEL.provable_from_formula i))::p::[])))
-        |NoI(cp, p) -> NoI(cp, (ProofTree.computeNode (Rules.implRule ()) (KERNEL.conclusion seqx) ((Forest.ProofTree.axiom (KERNEL.provable_from_formula i))::p::[])))
+      |True -> NoI(m)
+      |False(m, c, i, xp, f) -> let conjm = conjunction m in let fc = implies_formula conjm (atom_formula c) in
+        match (intuitProve (fc::s) x a q) with 
+        |YesI(ap, p) -> YesI(ap, (ProofTree.computeNode (Rules.mpRule ()) (KERNEL.conclusion seqx) ((ProofTree.computeNode (Rules.implRule ()) (KERNEL.conclusion (Sequent.build_sequent (merge s xp) fc)) (ProofTree.hypo (merge (merge (merge s xp) (conjm::[])) (i::[]))::f::[]))::p::[])))
+        |NoI(m) -> NoI(m)
   and intuitCheck s x m =
     let unpack = function Implies(Implies(Atom(a), Atom(b)), Atom(c)) ->(a, b, c)
                         |_ -> failwith "-- IntuitCheck UNGUARDED exception"
     in
-    let rec aux1 acc l1 l2 j =
+    let rec aux1 l1 l2 j =
       match (unpack j) with 
       |(a, b, c)
            when ((not (List.mem a m))
                  && (not (List.mem b m))
                  && (not (List.mem c m))) ->
               (match (intuitProve s (merge l1 l2) (a::m) (atom_formula b)) with
-               |YesI(ap, p) -> raise (Failure(falseA (clause ap a c) (implies_formula (implies_formula (atom_formula a) (atom_formula b)) (atom_formula c))))
-               |NoI(m, p) ->
+               |YesI(ap, p) -> raise (Failure(falseA (remove a ap) c j (merge l1 l2) p))
+               |NoI(m) ->
                  (match l2 with
-                  |[] -> ((p)::acc)
-                  |a::tl -> (aux1 (p::acc) (a::l1) tl a))
+                  |[] -> True
+                  |a::tl -> (aux1 (a::l1) tl a))
               )
        |(a, b, c)-> match l2 with
-                    |[]-> acc
-                    |a::tl -> aux1 acc (a::l1) tl a
+                    |[]-> True
+                    |a::tl -> aux1 (a::l1) tl a
     in
 (*
     let rec iter_on_x acc l1 j = match j with (Implies(Implies(Atom(a), Atom(b)), Atom(c)))::l2
@@ -87,7 +88,7 @@ module ProofBuilder (D : DPLL_Type) = struct
                                     |_ -> failwith "unguarded exception -- Intuitcheck"
     in
 *)
-    try True(format_intuit_answer (aux1 [] [] (List.tl x) (List.hd x))) with Failure(a) -> a
+    try (aux1 [] (List.tl x) (List.hd x)) with Failure(a) -> a
   ;;
     (*
     let format_exit l =
