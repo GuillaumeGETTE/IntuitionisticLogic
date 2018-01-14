@@ -1,5 +1,5 @@
 open Syntax.SYNTAX
-
+open Formula
 module GENERICS = struct
    let rec formula_contains_atom q = function
      |Atom(a) when (atom_equal (atom_formula a) q) ->true

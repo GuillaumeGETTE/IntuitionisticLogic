@@ -1,5 +1,4 @@
-open IKernel
-
+open Syntax.SYNTAX
 module ProofTree = struct
          type satleaf = string
          type tree = Axiom of KERNEL.provable | Sat of satleaf

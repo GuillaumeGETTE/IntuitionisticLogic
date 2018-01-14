@@ -1,8 +1,8 @@
 open Syntax.SYNTAX
 open Forest
 open Generics.GENERICS
-open IKernel
-
+open Clausification
+open Formula
 module Answer = struct
   type sat = YesSAT of a list * ProofTree.satleaf | NoSAT of a list
   type intuit = YesI of a list * ProofTree.tree | NoI of Sequent.sequent * ProofTree.tree
@@ -48,8 +48,8 @@ module ProofBuilder (D : DPLL_Type) = struct
       |True(h) -> NoI(seqx, g h s x a q)
       |False(c, i) ->
         match (intuitProve (c::s) (remove i x) a q) with
-        |YesI(ap, p) -> YesI(ap, (ProofTree.computeNode (Rules.implRule ()) (KERNEL.conclusion seqx) ((Forest.ProofTree.axiom (KERNEL.provable_from_formula i))::p::[])))
-        |NoI(cp, p) -> NoI(cp, (ProofTree.computeNode (Rules.implRule ()) (KERNEL.conclusion seqx) ((Forest.ProofTree.axiom (KERNEL.provable_from_formula i))::p::[])))
+        |YesI(ap, p) -> YesI(ap, (ProofTree.computeNode (Rules.implRule ()) (KERNEL.conclusion seqx) ((Forest.ProofTree.axiom (CLAUSIFICATION.provable_from_formula i))::p::[])))
+        |NoI(cp, p) -> NoI(cp, (ProofTree.computeNode (Rules.implRule ()) (KERNEL.conclusion seqx) ((Forest.ProofTree.axiom (CLAUSIFICATION.provable_from_formula i))::p::[])))
   and intuitCheck s x m =
     let unpack = function Implies(Implies(Atom(a), Atom(b)), Atom(c)) ->(a, b, c)
                         |_ -> failwith "-- IntuitCheck UNGUARDED exception"

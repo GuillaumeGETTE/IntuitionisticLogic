@@ -1,6 +1,6 @@
 open Syntax.SYNTAX
 open Generics.GENERICS
-
+open Formula
 module CLAUSIFICATION = struct
 
 type clausifiedFormula = Cformula of formula list * formula list * formula
@@ -74,5 +74,10 @@ let clausification f =
     in match (introduce_atom f) with
     |Implies(b,q)->let l1,l2=aux [] [] (clausification_process (b::[])) in Cformula(l1,l2,q)
     |_->failwith "code impossible"
+
+
+let provable_from_formula f = 
+     match clausification f with
+      |Cformula(s,x,q)->KERNEL.conclusion (Sequent.build_sequent (merge s x) q)
 
 end

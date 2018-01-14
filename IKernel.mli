@@ -11,7 +11,6 @@ end
 module KERNEL : sig
     type provable
     val conclusion : Sequent.sequent -> provable
-    val provable_from_formula : formula -> provable
 end
 
 module Rules : sig

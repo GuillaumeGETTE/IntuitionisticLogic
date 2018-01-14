@@ -2,8 +2,16 @@ open SAT_API
 open Syntax
 open IntuitSolver
 open Forest.ProofTree
+open SYNTAX.Formula
 
-module Solver = Solve(Syntax)
+module DPLL_SYNTAX = struct
+include SYNTAX
+
+end
+
+
+
+module Solver = Solve(DPLL_SYNTAX)
 
 module DPPL_Interface = struct
   
@@ -19,9 +27,9 @@ module DPPL_Interface = struct
     |_ -> failwith "SafeGuarded unless failure"
   ;;
 
-  let prove s = match (solve s) with
-    |SAT(l) -> Answer.YesSAT(bools_to_atom_formulae [] l, "Proved by DPLL")
-    |UNSAT(l, b) -> Answer.NoSAT(formulae_atom_list [] l)
+  let prove s = match (Solver.prove s) with
+    |Solver.SAT(l) -> Answer.YesSAT(bools_to_atom_formulae [] l, "Proved by DPLL")
+    |Solver.UNSAT(l, b) -> Answer.NoSAT(formulae_atom_list [] l)
   ;;
 
 end
