@@ -2,4 +2,64 @@
 
 \subsection{Modification de l'algorithme}
 
+Notre algorithme d\'ebute par un pr\'etraitement des donn\'ees d'entr\'e.
+Tout d'abord, l'ensemble des atomes sont renomm\'es pour permettre l'introduction de nouveaux atomes durant l'\'etablissement des ensembles $S$ et $X$. La formule est ensuite mise sous forme canonique selon les r\`egles explicit\'ees en page 625 de \ref{intuit2015} de la mani\`ere suivante : la formule est pouss\'ee dans une liste vide, puis pour chaque élément de cette liste, l'algorithme essaye d'appliquer une des r\`egles. En cas de réussite, l'\'element est d\'epil\'e et les formules g\'en\'er\'ees sont ajout\'ees en d\'ebut de liste, en cas d'\'echec l'algorithme met cet \'element de c\^ot\'e et passe aux suivants. Ce traitement g\'en\`ere de nouveaux atomes mais r\'eduit la taille des clauses, donc termine. Enfin la liste est parcourue pour s\'eparer les clauses plates (ensemble $S$) des clauses de type implication (ensemble $X$), et pour chaque clause $(a \rightarrow b) \rightarrow c$ de $X$, la clause $b \rightarrow c$ est ajout\'ee \`a $S$.
+
+Une fois la mise sous forme canonique achev\'ee, nous passons à la phase de recherche de preuve, que nous avons rendu récursive. Cette phase se compose de deux fonctions, \textit{intuitCheck} et \textit{intuitProve} :
+
+- SAT-solver s
+- implication clauses X
+- assumptions A
+- proof goal q
+- SAT-proof p
+- Intuitionistic proofs p', p2 and p3
+procedure intuitProve (s, X , A, q)
+
+switch satProve (s, A, q)
+case YesSAT (A', p) :
+return YesI (A', p');
+case NoSAT (M ) :
+switch intuitCheck (s, X , M )
+case True :
+return NoI (M );
+case False (M*, c, i, X*, p2):
+switch intuitProve(($M* \rightarrow c$)::s,X,A,q)
+case YesI(A', p1) :
+return YesI(A', p3);
+case NoI(M'):
+return NoI(M');
+
+avec p' :
+\begin{prooftree}
+\AxiomC{p}
+\LeftLabel{SAT}
+\UnaryInfC{$S, X, A \vdash q$}
+\end{prooftree}
+
+et p3 :
+\begin{prooftree}
+\AxiomC{p1}
+\AxiomC{M*, S, X-{i}, i}
+\AxiomC{p2}
+\LeftLabel{IMPL}
+\BinaryInfC{$S, X-{i}, \vdash M* \rightarrow c$}
+\LeftLabel{MP}
+\BinaryInfC{$S, X, A \vdash q$}
+\end{prooftree}
+
+
+
+-- SAT-solver s
+-- implication clauses X
+-- model M
+procedure intuitCheck (s, X , M )
+for i ∈ X :
+let (a → b) → c = i
+if a, b, c ∈
+/ M then
+switch intuitProve (s, X − {i}, M ∪ {a}, b)
+case YesI (M*,p) :
+return False(M*, c, i, X-{i}, p)
+case NoI(M')
+return True;
 \subsection{R\'ecriture d'une preuve classique en intuitionniste}
