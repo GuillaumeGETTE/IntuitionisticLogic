@@ -7,27 +7,30 @@ Tout d'abord, l'ensemble des atomes sont renomm\'es pour permettre l'introductio
 
 Une fois la mise sous forme canonique achev\'ee, nous passons à la phase de recherche de preuve, que nous avons rendu récursive. Cette phase se compose de deux fonctions, \textit{intuitCheck} et \textit{intuitProve} :
 
-- SAT-solver s
+
+- flat clauses S
 - implication clauses X
 - assumptions A
 - proof goal q
 - SAT-proof p
 - Intuitionistic proofs p', p2 and p3
-procedure intuitProve (s, X , A, q)
 
+\begin{listing}[1]{1}
+procedure intuitProve (s, X , A, q)
 switch satProve (s, A, q)
-case YesSAT (A', p) :
-return YesI (A', p');
-case NoSAT (M ) :
-switch intuitCheck (s, X , M )
-case True :
-return NoI (M );
-case False (M*, c, i, X*, p2):
-switch intuitProve(($M* \rightarrow c$)::s,X,A,q)
-case YesI(A', p1) :
-return YesI(A', p3);
-case NoI(M'):
-return NoI(M');
+    case YesSAT (A', p) :
+        return YesI (A', p');
+    case NoSAT (M ) :
+        switch intuitCheck (s, X , M )
+            case True :
+                return NoI (M );
+            case False (M*, c, i, X*, p2):
+                switch intuitProve(($M* \rightarrow c$)::s,X,A,q)
+                    case YesI(A', p1) :
+                        return YesI(A', p3);
+                    case NoI(M'):
+                        return NoI(M');
+\end{listing}
 
 avec p' :
 \begin{prooftree}
@@ -52,14 +55,17 @@ et p3 :
 -- SAT-solver s
 -- implication clauses X
 -- model M
+
+\begin{listing}[1]{1}
 procedure intuitCheck (s, X , M )
-for i ∈ X :
-let (a → b) → c = i
-if a, b, c ∈
-/ M then
-switch intuitProve (s, X − {i}, M ∪ {a}, b)
-case YesI (M*,p) :
-return False(M*, c, i, X-{i}, p)
-case NoI(M')
-return True;
+    for i ∈ X :
+        let (a → b) → c = i
+        if a, b, c $\notin$ M then
+            switch intuitProve (s, X − {i}, M ∪ {a}, b)
+                case YesI (M*,p) :
+                    return False(M*, c, i, X-{i}, p)
+                case NoI(M')
+                return True;
+\end{listing}
+                
 \subsection{R\'ecriture d'une preuve classique en intuitionniste}
