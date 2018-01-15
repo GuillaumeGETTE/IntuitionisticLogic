@@ -1,5 +1,6 @@
 open Syntax.SYNTAX
-
+open Formula
+open Sequent
 module SYMBOLS = struct
 
 let printSeq = "\\vdash"
@@ -18,11 +19,11 @@ module PRINTER = struct
 open SYMBOLS
 
 let rec formula_to_string parenthesis = function
-  |Atom(s)->let str = get_atom_content s
+  |Atom(s)-> s
   |Or(f1,f2)->let po = (if parenthesis then lpar else "") in let pf=(if parenthesis then rpar else "") in (po^(formula_to_string true f1))^(((" "^printOr)^" ")^((formula_to_string true f2)^pf))
   |And(f1,f2)->let po = (if parenthesis then lpar else "") in let pf=(if parenthesis then rpar else "") in (po^(formula_to_string true f1))^(((" "^printAnd)^" ")^((formula_to_string true f2)^pf))
   |Implies(f1,f2)->let po = (if parenthesis then lpar else "") in let pf=(if parenthesis then rpar else "") in (po^(formula_to_string true f1))^(((" "^printImplies)^" ")^((formula_to_string true f2)^pf))
-  |True-> printTop |False-> printBot
+  |Top-> printTop |Btm-> printBot
 ;;
 
 let rec _flts_aux = function
@@ -35,12 +36,12 @@ let formula_list_to_string = function
 |t::q->(formula_to_string false t)^(_flts_aux q)
 ;;
 
-let sequent_to_string ccl  = ((formula_list_to_string ccl.left)^((" "^printSeq)^" "))^(formula_list_to_string ccl.right)
+let sequent_to_string ccl  = ((formula_list_to_string (left ccl))^((" "^printSeq)^" "))^(formula_list_to_string ((right ccl)::[]))
 ;;
 
-let theorem_to_string ccl = sequent_to_string (conclusion ccl);;
+let theorem_to_string ccl = sequent_to_string (ccl);;
 
 let print_sequent ccl = (Pervasives.print_string (sequent_to_string ccl); Pervasives.print_newline ());;
 
-let print_theorem ccl = print_sequent (conclusion ccl);;
+let print_theorem ccl = print_sequent (ccl);;
 end
