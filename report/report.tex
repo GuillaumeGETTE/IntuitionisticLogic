@@ -1,5 +1,5 @@
 \documentclass[10pt, a4paper]{amsart}
-\usepackage[left=0.5in, right=0.5in, top=1in]{geometry}
+%\usepackage[left=0.5in, right=0.5in, top=1in]{geometry}
 \usepackage{amssymb}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{bussproofs}
@@ -7,6 +7,7 @@
 \usepackage{multicol}
 \usepackage{algorithm}
 \usepackage{algorithmic}
+\usepackage{listings}
 
 
 \title{INF551 :\'Ecriture d'une preuve dans le calcul des s\'equents de Dikhoff
@@ -18,7 +19,7 @@
 
 
 \begin{abstract}
-  Ce rapport synth\'etise les résultats de notre travail de premi\`ere p\'eriode visant à modifier la méthode de preuve d'un SAT-solver intuitionniste détaillé dans \ref{intuit2015}. Il s'agit de faire en sorte de transformer l'algorithme pour produire une preuve d'une formule intuitionniste écrite dans le calcul des séquents de Dikhoff tel que pr\'esent\'e dans \ref{dikh}.
+  Ce rapport synth\'etise les résultats de notre travail de premi\`ere p\'eriode visant à modifier la méthode de preuve d'un SAT-solver intuitionniste détaillé dans \ref{intuit2015}. Il s'agit de faire en sorte de transformer l'algorithme pour produire une preuve d'une formule intuitionniste écrite dans le calcul des séquents de Dikhoff tel que pr\'esent\'e dans \cite{dikh}.
 Le présent rapport d\'etaille dans une premi\`ere partie le contenu des deux articles sus-cit\'es avant de pr\'esenter les mécanismes de notre algorithme modifi\'e et les d\'etails de l'impl\'ementation en OCaml.
 \end{abstract}
 
@@ -30,7 +31,8 @@ Le présent rapport d\'etaille dans une premi\`ere partie le contenu des deux ar
 \include{part2}
 \include{part3}
 
-\bibliography{biblio}{plain}
+\bibliography{biblio}
+\bibliographystyle{ieeetr}
 
 
 \end{document}
