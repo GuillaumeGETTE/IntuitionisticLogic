@@ -7,27 +7,30 @@ Tout d'abord, l'ensemble des atomes sont renomm\'es pour permettre l'introductio
 
 Une fois la mise sous forme canonique achev\'ee, nous passons à la phase de recherche de preuve, que nous avons rendu récursive. Cette phase se compose de deux fonctions, \textit{intuitCheck} et \textit{intuitProve} :
 
-- SAT-solver s
+
+- flat clauses S
 - implication clauses X
 - assumptions A
 - proof goal q
 - SAT-proof p
 - Intuitionistic proofs p', p2 and p3
-procedure intuitProve (s, X , A, q)
 
+\begin{listing}[1]{1}
+procedure intuitProve (s, X , A, q)
 switch satProve (s, A, q)
-case YesSAT (A', p) :
-return YesI (A', p');
-case NoSAT (M ) :
-switch intuitCheck (s, X , M )
-case True :
-return NoI (M );
-case False (M*, c, i, X*, p2):
-switch intuitProve(($M* \rightarrow c$)::s,X,A,q)
-case YesI(A', p1) :
-return YesI(A', p3);
-case NoI(M'):
-return NoI(M');
+    case YesSAT (A', p) :
+        return YesI (A', p');
+    case NoSAT (M ) :
+        switch intuitCheck (s, X , M )
+            case True :
+                return NoI (M );
+            case False (M*, c, i, X*, p2):
+                switch intuitProve(($M* \rightarrow c$)::s,X,A,q)
+                    case YesI(A', p1) :
+                        return YesI(A', p3);
+                    case NoI(M'):
+                        return NoI(M');
+\end{listing}
 
 avec p' :
 \begin{prooftree}
@@ -52,14 +55,64 @@ et p3 :
 -- SAT-solver s
 -- implication clauses X
 -- model M
+
+\begin{listing}[1]{1}
 procedure intuitCheck (s, X , M )
-for i ∈ X :
-let (a → b) → c = i
-if a, b, c ∈
-/ M then
-switch intuitProve (s, X − {i}, M ∪ {a}, b)
-case YesI (M*,p) :
-return False(M*, c, i, X-{i}, p)
-case NoI(M')
-return True;
+    for i ∈ X :
+        let (a → b) → c = i
+        if a, b, c $\notin$ M then
+            switch intuitProve (s, X − {i}, M ∪ {a}, b)
+                case YesI (M*,p) :
+                    return False(M*, c, i, X-{i}, p)
+                case NoI(M')
+                return True;
+\end{listing}
+
+Cet algorithme tente donc de trouver un mod\`ele v\'erifiant l'ensemble des clauses plates de $S$ gr\^ace \`a un SAT-solver : en effet, l'existence d'une preuve classique d'un tel ensemble de clause est \'equivalente \`a celle d'une preuve intuitionniste. Ainsi, l'efficacité algorithmique du SAT-solver est utilis\'ee pour acc\'el\'erer l'ex\'ecution en vue de statuer sur l'existence ou non d'une telle preuve. Le mod\`ele \'eventuel est ensuite confront\'e aux clauses de $X$ : s'il est compatible, l'algorithme renvoie la preuve associ\'ee, sinon, l'ensemble $S$ est augment\'e de la clause $M* \rightarrow c$ et un nouveau mod\`ele est alors cherch\'e.
+                
 \subsection{R\'ecriture d'une preuve classique en intuitionniste}
+
+Le SAT-solver n'\'etudiant que des clauses plates, donc un sous ensemble tr\`es restreint de clauses, seules 3 r\`egles seront utilis\'ees par ce dernier, et il est alors ais\'e de transformer une preuve classique en preuve intuitionniste.
+
+Ainsi, les r\`egles classiques UNSAT, resolve et currify :
+
+\begin{prooftree}
+\AxiomC{$A \vdash q$}
+\LeftLabel{UNSAT}
+\UnaryInfC{$A, \neq q \vdash \bot$}
+\end{prooftree}
+
+\begin{prooftree}
+  \AxiomC{$H \vdash L$}
+  \AxiomC{$H', L \vdash A$}
+\LeftLabel{resolveSAT}
+\BinaryInfC{$H \cup H', \neq q \vdash \bot$}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{$A \vdash q$}
+\LeftLabel{currifySAT}
+\UnaryInfC{$A, \neq q \vdash \bot$}
+\end{prooftree}
+
+deviennent en intuitioniste :
+
+\begin{prooftree}
+\AxiomC{$A \vdash q$}
+\LeftLabel{doubleNegIntuit}
+\UnaryInfC{$A, q \to \bot \vdash \bot$}
+\end{prooftree}
+
+\begin{prooftree}
+  \AxiomC{$H \vdash L$}
+  \UnaryInfC{$H, H' \vdash L \to H'$}
+  \AxiomC{$H', L \vdash A$}
+\LeftLabel{MP}
+\BinaryInfC{$H, H' \vdash A$}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{$A, l \vdash \bot$}
+\LeftLabel{currifyIntuit}
+\UnaryInfC{$A \vdash l \to \bot$}
+\end{prooftree}
